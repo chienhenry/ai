@@ -1,25 +1,28 @@
 import streamlit as st
 
 from xiaohongshu_utils import generate_xiaohongshu
+import config
 
 
 st.header("爆款小红书AI写作助手 ✏️")
 with st.sidebar:
-    openai_api_key = st.text_input("请输入OpenAI API密钥：", type="password")
-    st.markdown("[获取OpenAI API密钥](https://platform.openai.com/account/api-keys)")
+    deepseek_api_key = st.text_input(
+        "请输入DeepSeek API密钥：", value=config.DEEPSEEK_API_KEY, type="password"
+    )
+    st.markdown("[获取DeepSeek API密钥](https://platform.deepseek.com/api_keys)")
 
 theme = st.text_input("主题")
 submit = st.button("开始写作")
 
-if submit and not openai_api_key:
-    st.info("请输入你的OpenAI API密钥")
+if submit and not deepseek_api_key:
+    st.info("请输入你的DeepSeek API密钥")
     st.stop()
 if submit and not theme:
     st.info("请输入生成内容的主题")
     st.stop()
 if submit:
     with st.spinner("AI正在努力创作中，请稍等..."):
-        result = generate_xiaohongshu(theme, openai_api_key)
+        result = generate_xiaohongshu(theme, deepseek_api_key)
     st.divider()
     left_column, right_column = st.columns(2)
     with left_column:

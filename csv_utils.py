@@ -1,5 +1,5 @@
 import json
-from langchain_openai import ChatOpenAI
+from langchain_deepseek import ChatDeepSeek
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 
 
@@ -31,17 +31,22 @@ PROMPT_TEMPLATE = """
 你要处理的用户请求如下： 
 """
 
-def dataframe_agent(openai_api_key, df, query):
-    model = ChatOpenAI(model="gpt-3.5-turbo",
-                       openai_api_key=openai_api_key,
-                       temperature=0,
-                       openai_api_base='https://api.aigc369.com/v1')
-    agent = create_pandas_dataframe_agent(llm=model,
-                                          df=df,
-                                          agent_executor_kwargs={"handle_parsing_errors": True},
-                                          verbose=True)
+
+def dataframe_agent(deepseek_api_key, df, query):
+    model = ChatDeepSeek(
+        model="deepseek-chat",
+        api_key=deepseek_api_key,
+        temperature=0,
+        base_url="https://api.deepseek.com",
+    )
+    agent = create_pandas_dataframe_agent(
+        llm=model,
+        df=df,
+        agent_executor_kwargs={"handle_parsing_errors": True},
+        verbose=True,
+        allow_dangerous_code=True,
+    )
     prompt = PROMPT_TEMPLATE + query
     response = agent.invoke({"input": prompt})
     response_dict = json.loads(response["output"])
     return response_dict
-
